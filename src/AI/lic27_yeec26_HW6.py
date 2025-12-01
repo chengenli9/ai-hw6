@@ -128,14 +128,6 @@ def categorizeState(state, myId, enemyId):
     return features
 
 
-
-
-# TD-Learning Equation: 
-#   U(s) = U(s) + LEARNING_RATE * (Reward(s) + DISCOUNT_FACTOR * U(s') - U(s))
-
-
-
-
 ##
 #AIPlayer
 #Description: The responsbility of this class is to interact with the game by
@@ -163,15 +155,21 @@ class AIPlayer(Player):
         self.gamesPlayed = 0
 
 
-    # load weights function
+    # # load weights function
     def loadWeights(self):
-        # load state utilitie from file if it exits
-        print(f"Looking for weights file at: {os.path.abspath(WEIGHTS_FILE)}")  # Debug line
+        print(f"Looking for weights file at: {os.path.abspath(WEIGHTS_FILE)}")
 
         if os.path.exists(WEIGHTS_FILE):
             try:
-                with open(WEIGHTS_FILE, 'rb') as f:
-                    self.stateUtilities = pickle.load(f)
+                self.stateUtilities = {}
+                with open(WEIGHTS_FILE, 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if "|" not in line:
+                            continue
+                        state, utility = line.split("|", 1)
+                        self.stateUtilities[state] = float(utility)
+
                 print(f"Loaded {len(self.stateUtilities)} state utilities from {WEIGHTS_FILE}")
 
             except Exception as e:
@@ -180,14 +178,21 @@ class AIPlayer(Player):
         else:
             print("No saved weights found, starting fresh")
 
-    # save utilities to file
+
+    # save weights for training
     def saveWeights(self):
         try:
-            with open(WEIGHTS_FILE, 'wb') as f:
-                pickle.dump(self.stateUtilities, f)
+            with open(WEIGHTS_FILE, 'w') as f:
+                for state, utility in self.stateUtilities.items():
+                    f.write(f"{state}|{utility}\n")
+
             print(f"Saved {len(self.stateUtilities)} state utilities to {WEIGHTS_FILE}")
+
         except Exception as e:
             print(f"Error saving weights: {e}")
+
+
+
 
     # get utility for a state category
     def getUtility(self, stateCategory):
