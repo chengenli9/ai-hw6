@@ -166,7 +166,9 @@ def categorizeState(gameState, myId, enemyId):
         utility = min(utility, 1.0)
         fea = np.append(fea, utility)
 
-    return fea
+        feas = tuple(val for val in fea)
+
+    return feas
 
 
 ##
@@ -238,7 +240,7 @@ class AIPlayer(Player):
     # get utility for a state category
     def getUtility(self, stateCategory):
         if stateCategory not in self.stateUtilities:
-            self.stateUtilities[stateCategory] = np.sum(stateCategory)
+            self.stateUtilities[stateCategory] = 0.0 #np.sum(stateCategory)
         return self.stateUtilities[stateCategory]
 
     # utility function using TD learning
