@@ -238,7 +238,7 @@ class AIPlayer(Player):
     # get utility for a state category
     def getUtility(self, stateCategory):
         if stateCategory not in self.stateUtilities:
-            self.stateUtilities[stateCategory] = 0.0
+            self.stateUtilities[stateCategory] = np.sum(stateCategory)
         return self.stateUtilities[stateCategory]
 
     # utility function using TD learning
